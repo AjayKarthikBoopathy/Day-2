@@ -1,0 +1,218 @@
+Day-2 Assignment
+
+Document, Window and Screen Objects:-
+
+	Window is the main JavaScript object root, also called global object in a browser, and it 
+can also be treated as the root of the document object model. You can access it as window.
+
+•	window.screen or just screen is a small information object about physical screen dimensions.
+•	window.document or just document is the main object of the potentially visible (or better yet: rendered) 
+document object model/DOM.
+
+Since window is the global object, you can reference any properties of it with just the 
+property name - so you do not have to write down window. - it will be figured out by the runtime.
+
+   Well, the window is the first thing that gets loaded into the browser. This window object 
+has the majority of the properties like length, innerWidth, innerHeight, name, if it has been 
+closed, its parents, and more.
+   
+   What about the document object then? The document object is your html, aspx, php, or other 
+document that will be loaded into the browser. The document actually gets loaded inside the window 
+object and has properties available to it like title, URL, cookie, etc. What does this 
+really mean? That means if you want to access a property for the window it is window.property, if it 
+is document it is window.document.property which is also available in short as document.property.
+
+Briefly, 
+•	window is the execution context and global object for that context's JavaScript
+•	document contains the DOM, initialized by parsing HTML
+•	screen describes the physical display's full screen
+
+See W3C and Mozilla references for details about these objects. The most basic relationship 
+among the three is that each browser tab has its own window, and a window has window.document 
+and window.screen properties. The browser tab's window is the global context, so document and screen 
+refer to window.document and window.screen. More details about the three objects are below, 
+following Flanagan's JavaScript: Definitive Guide.
+
+Window:-
+
+	Each browser tab has its own top-level window object. Each <iframe> (and deprecated <frame>) element 
+has its own window object too, nested within a parent window. Each of these windows gets its own separate 
+global object. window.window always refers to window, but window.parent and window.top might refer to 
+enclosing windows, giving access to other execution contexts. In addition to document and screen described 
+below, window properties include
+•	setTimeout() and setInterval() binding event handlers to a timer
+•	location giving the current URL
+•	history with methods back() and forward() giving the tab's mutable history
+•	navigator describing the browser software
+
+Document:-
+
+	Each window object has a document object to be rendered. These objects get confused in part 
+because HTML elements are added to the global object when assigned a unique id. E.g., in the HTML snippet.
+
+<body>
+  <p id="holyCow"> This is the first paragraph.</p>
+</body>
+
+the paragraph element can be referenced by any of the following:
+
+window.holyCow or window["holyCow"]
+document.getElementById("holyCow")
+document.querySelector("#holyCow")
+document.body.firstChild
+document.body.children[0]
+
+Screen:-
+
+	The window object also has a screen object with properties describing the physical 
+display.
+
+•	screen properties width and height are the full screen
+•	screen properties availWidth and availHeight omit the toolbar
+
+	The portion of a screen displaying the rendered document is the viewport in JavaScript, which is 
+potentially confusing because we call an application's portion of the screen a window when talking about 
+interactions with the operating system. The getBoundingClientRect() method of any document element will 
+return an object with top, left, bottom, and right properties describing the location of the element 
+in the viewport.
+
+•	console.dir(window);
+•	console.dir(document);
+•	console.dir(screen);
+
+	window is the root of everything, screen just has screen dimensions, and document is 
+top DOM object. So you can think of it as window being like a super-document...
+
+•	The window is the actual global object.
+•	The screen is the screen, it contains properties about the user's display.
+
+The document is where the DOM is.
+
+In console, by writing,
+This
+or
+window
+and hitting Enter, we can access the window which is the top level object in the browser -- or even 
+by using either one of those properties of window too,
+top
+parent
+self
+globalThis  //even combined in between.
+
+Indeed, checking any pair of those above will return true :
+this === window // true
+window === globalThis // true
+this === self // true
+parent === window // true
+top === parent // true
+even some multiple combinations of them -- fact possible for the reason that
+window.window === window // true
+
+	Because window is also its own property, so we can even write window.window.window === window as well, 
+or even stuff like window.window.self.top.parent.globalThis === window, all those returning true.
+
+	The only exception is that we can't use this on the last position because it isn't a property (therefore 
+window.window.this === window // false because actually window.this === undefined // true, as window has NOT 
+a such this property).
+
+	As a result, we can't write self.this, top.this, parent.this, window.this, the only way possible being 
+to replace it instead with globalThis in the last position, as a property of window, like in top.globalThis etc.
+
+	When having a webpage with frames, each frame document would belong to an own separate window object, 
+that separate window being a child of the previous top level window shown earlier - you can simply test 
+that on a platform with frames (like jsfiddle, codepen, w3schools) where writing and executing in the 
+frame console.log(window.parent === window); will return false while if you write window.parent === window 
+directly in console will return true. In the frame, window.parent will access the global window (the parent 
+of frame window object being obviously not the same as the frame window object itself). You can check 
+content of each these windowS separately running in the frame the codes (and seeing results like):
+
+console.log(window.document.all); // HTMLAllCollection(6) [html, head, body, p#demo, button, script, demo: p#demo]
+respectively,
+
+console.log(window.parent.document.all); // HTMLAllCollection(335) [html, head, script, script, title, meta, 
+meta, meta, meta, meta, meta, meta, meta, link, link, link, link, script, script, script, script, script, 
+script, script, script, script, style, script, script, script, script, style, script, meta, meta, meta, meta, 
+meta, meta, meta, meta, script, argprec0, argprec1, link, script, link, script, link, script, link, script, 
+link, script, link, script, link, script, link, script, link, script, link, script, link, script, link, script, 
+link, script, link, script, link, script, link, script, link, script, link, script, link, script, link, script, 
+link, script, link, script, link, script, link, script, link, script, link, script, link, script, link, 
+script, …] - therefore much more elements contained in the parent document
+
+Doing same check, but from the console this time:
+window.document.all // HTMLAllCollection(335) [html, head, script, script, title, meta, meta, meta, 
+meta, meta, meta, meta, meta, link, link, link, link, script, script, script, script, script, script, 
+script, script, script, style, script, script, script, script, style, script, meta, meta, meta, meta, 
+meta, meta, meta, meta, script, argprec0, argprec1, link, script, link, script, link, script, link, 
+script, link, script, link, script, link, script, link, script, link, script, link, script, link, script, 
+link, script, link, script, link, script, link, script, link, script, link, script, link, script, link, 
+script, link, script, link, script, link, script, link, script, link, script, link, script, link, script, 
+link, script, link, script, …] - again the same huge elements list
+
+	As we see, the console (open it with F12) has access to the most top level window scope / context (versus 
+the frame underneath that is contained in its own limited context / scope) so it shows all elements at once. 
+This is same context we started to refer in the beginning as well.Going further with the main concepts, 
+there is even more to understand. In saying that window is the top level object in browser one should understand 
+that it is a certain representation in the memory of the browser (software called client) from where the browser 
+will paint (render) the visible page (which we refer to as a document - again, accesible as a property of window).
+
+	As such, we can access the document in console - to see its structure - simply using window.document 
+where we can see everything in it by clicking on #document. Again, we will see there a representation of the 
+document, not the document itself. That representation seen in console is the DOM, being a Model of the 
+original file, and is created by taking PLUS improving in a certain way, where needed, the data parsed from 
+source code of the original document by the JavaScript engine of the browser. The source code is immutable 
+(the browser doesn't change the html file received from internet), while the DOM is mutable (and the mutations 
+are made by JavaScript code ran into the browser either before or after the page is rendered on the device 
+hardware). For clarity: what we see in console is DOM, what we see in browser is the rendering and what we 
+see in source code is the original file. They're not the same, everyone is different from the other two.
+
+	To help you understand, I would compare that process with client software being in "real life" some 
+talented person visiting the Louvre museum and seeing the Monalisa painting (the source code file). The image 
+of Monalisa in tourist mind isn't the same as the original painting made by Leonardo, it's just a mental 
+representation of it. From it, the talented tourist will then recreate again on his brain some "own" Monalisa, 
+improving here and there what should be improved or changed before finally painting when back at home on a 
+canvas all the colors of the original image plus even more.
+
+	Therefore, we have 3 'entities' (a- html file, immutable, containing the source code, b- one representation 
+of it, created after the source code is parsed and "understood" by the browser or improved, c- the rendering 
+itself that is displayed on the screen). The primary improvement mentioned can be like adding closing tags where 
+missing previously in the source file, adding or deleting elements inside the Model, according to the script 
+instructions contained in the source file, changing them, requesting further resources (as images, fonts, 
+css files, media files to be used as assets of the final full page, etc) and so on.
+
+	Despite of similarity in names, a window related to a specific document and browser window shouldn't be 
+considered as the same thing, the first one being attached to the later one (and accesible as a property of it). 
+Likewise, when having multiple browser windows (say 10 instances), each one with multiple tabs (or not), those 
+are attached to the browser window, and their objects accesible by window[0] up to window[9].
+
+	Regarding the screen, browser client is a software (a code) that runs and executes another software (source 
+code) for the purpose of finally displaying that (second) code on the hardware device (monitor / screen) through 
+several layers. For this purpose, browser software has also actually its own separate programming routines able 
+to interact with the operating system in order to detect the screen resolution, size, color depths, some settings 
+and more, therefore it acts as a bridge between the operating system and the files meant to be displayed on its 
+rendering area.
+
+	By using console.log(window.screen) will return to us the details collected from the OS by the browser about 
+the device monitor (and stored in its memory) such as {availWidth: 1920, availHeight: 1040, width: 1920, 
+height: 1080, colorDepth: 24, …}
+
+	A simpler code can be used (no need to write always the window word) and extract for example the width 
+of the device:
+console.log(screen.width) // 1920
+
+	You can use such data even for executing some pseudo media queries based purely on JavaScript and with 
+no CSS whatsoever, 
+
+Example:-
+function goMobile() {
+    if (screen.width < 900) {location.replace("/index-mobile.html");}
+}
+goMobile();
+
+Conclusion:- 
+
+	Window and document belong to DOM, screen doesn't. You need all of them, however because document 
+and screen are both properties of window object, you can just invoke them directly in your code (shortening 
+the code). More, screen being about the hardware part, not any browsers' rectangular available area to 
+render on, it hasn't the meaning of document.body. At most, you can put screen data to use in order to 
+optimize your loading page, for example limiting the assets downloads for a better mobile device 
+experience and so on.
